@@ -93,13 +93,14 @@ def main():
     ax.set_axis_off()
     plt.tight_layout()
     st.pyplot(fig)
+    
 
     # ---------------- YEAR SLIDER ----------------
     st.session_state.year = st.slider(
         "Move the marker to explore different years:",
-        min_value=min(years),
-        max_value=max(years),
-        value=year,
+        min_value=int(min(years)),
+        max_value=int(max(years)),
+        value=int(year),
         step=1,
     )
 
