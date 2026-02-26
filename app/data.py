@@ -18,7 +18,7 @@ def download_data(download_dir: Path) -> None:
     }
 
     for name, url in urls.items():
-        response = requests.get(url)
+        response = requests.get(url, timeout=30)
         response.raise_for_status()
 
         file_path = download_dir / f"{name}.csv"
@@ -29,7 +29,14 @@ def download_data(download_dir: Path) -> None:
 
 
 def merge_world_with_data(world: gpd.GeoDataFrame, data: pd.DataFrame, world_key: str, data_key: str) -> gpd.GeoDataFrame:
-    data = data[~data[data_key].isin(["World", "Europe", "Asia", "Africa", "Oceania", "North America", "South America", "European Union", "High-income countries", "Low-income countries"])]
+    """Merges map data with the provided dataset."""
+
+    if data_key not in data.columns:
+        raise KeyError(f"'{data_key}' not found in data columns: {list(data.columns)}")
+
+    valid_countries = set(world[world_key])
+    data = data[data[data_key].isin(valid_countries)]
+
     return world.merge(data, how="left", left_on=world_key, right_on=data_key)
 
 

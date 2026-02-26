@@ -1,10 +1,10 @@
-from pathlib import Path
 from app.data import download_data
 import geopandas as gpd
 import pandas as pd
 from app.data import merge_world_with_data
 
 def test_download_data_creates_files(tmp_path):
+    """Tests that download_data creates the expected files in the specified directory."""
     download_dir = tmp_path / "downloads"
 
     download_data(download_dir)
@@ -22,6 +22,7 @@ def test_download_data_creates_files(tmp_path):
         assert (download_dir / file_name).exists()
 
 def test_merge_world_with_data_basic():
+    """Tests that merge_world_with_data correctly merges a simple world GeoDataFrame with a data DataFrame."""
     world = gpd.GeoDataFrame(
         {"name": ["Portugal", "Spain"],
         "geometry": [None, None],})
