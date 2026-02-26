@@ -7,4 +7,14 @@ Group members:
     - Liane Kpocheme: 73516@novasbe.pt  
     - Simone Capata: 74777@novasbe.pt  
 
+## Setup (Recommended)
+To create the conda environment:  
+conda env create -f environment.yml
+conda activate okavango
+
+Run the Streamlit app:
+streamlit run app/streamlit_app.py
+
+Run tests:
+pytest -q
 
