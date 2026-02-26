@@ -6,6 +6,7 @@ from data import OkavangoData, merge_world_with_data
 
 
 def main():
+    "Creates a Streamlit website showing different environmental indicators with data visualizations"
     st.title("🌍 Environmental Data Explorer")
     st.markdown("Explore global environmental indicators using country-level maps and targeted visual summaries for a selected year")
 
