@@ -1,0 +1,4 @@
+ollama:
+  host: "http://127.0.0.1:11434"
+  vision_model: "moondream"
+  text_model: "llama3.2:1b"
