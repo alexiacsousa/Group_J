@@ -1,4 +1,37 @@
 ollama:
   host: "http://127.0.0.1:11434"
-  vision_model: "moondream"
-  text_model: "llama3.2:1b"
+
+image_analysis:
+  model: "moondream"
+  prompt: |
+    Describe this satellite image in detail.
+    Focus on vegetation, water bodies, bare soil, roads, buildings,
+    industrial or mining areas, and signs of deforestation, flooding,
+    erosion, fire, pollution, or land degradation.
+    End with a short summary of possible environmental concerns.
+  temperature: 0.2
+  top_p: 0.9
+  max_tokens: 300
+
+risk_analysis:
+  model: "llama3.2:1b"
+  prompt: |
+    You are an environmental risk analyst.
+    Based only on the satellite image description below, determine whether
+    the area shows signs of environmental danger.
+
+    Answer exactly in this format:
+    Danger: Y or N
+    Risk level: Low / Medium / High
+    Main risks: short comma-separated list
+    Explanation: one or two sentences
+
+    Use only the description provided.
+  temperature: 0.1
+  top_p: 0.9
+  max_tokens: 200
+
+imagery:
+  source: "ESRI World Imagery"
+  tile_size: 256
+  format: "jpg"
