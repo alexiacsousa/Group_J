@@ -8,9 +8,15 @@ Group members:
     - Simone Capata: 74777@novasbe.pt  
 
 ## Setup (Recommended)
-To create the conda environment:  
+To create the conda environment:
+
 conda env create -f environment.yml
 conda activate requirements_j
+
+
+To update the conda environmnemt:
+
+conda env update -f environment.yml --prune
 
 Run the Streamlit app:
 streamlit run app/streamlit_app.py
