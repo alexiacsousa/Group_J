@@ -4,7 +4,8 @@ channels:
 
 dependencies:
   - python=3.11
-  - streamlit
+  - streamlit>=1.30
+  - altair>=5
   - pandas
   - geopandas
   - matplotlib
@@ -12,7 +13,7 @@ dependencies:
   - pytest
   - pillow
   - pyyaml
+  - pydantic
   - pip
   - pip:
       - ollama
-      - protobuf==3.20.3
