@@ -1,0 +1,95 @@
+timestamp,latitude,longitude,zoom,image_path,image_prompt,image_model,image_model_temperature,image_description,text_prompt,text_model,text_model_temperature,danger_flag,risk_level,text_description
+2026-03-15T21:54:47.696170,-3.0,-3.0,15,C:\Users\lilik\OneDrive\Documents\2025-2027 Nova Sbe\S2\T1\2612-Advanced Programming for Data Science\Group project\Group_J\images\esri_-3.0_-3.0_z15.jpg,"Describe this satellite image in detail.
+Focus on vegetation, water bodies, bare soil, roads, buildings,
+industrial or mining areas, and signs of deforestation, flooding,
+erosion, fire, pollution, or land degradation.
+End with a short summary of possible environmental concerns.
+",moondream,0.2,"
+The image shows a satellite view of an area that appears to be experiencing environmental issues such as deforestation, flooding, erosion, or pollution. The landscape features bare soil and roads, indicating potential human activity in the region. Additionally, there are signs of industrial or mining activities present, which could contribute to these problems. The presence of water bodies also suggests a complex ecosystem that may be affected by these environmental concerns. Overall, the image highlights the need for effective conservation efforts and sustainable land management practices to address these challenges.","You are an environmental risk analyst.
+Based only on the satellite image description below, determine whether
+the area shows signs of environmental danger.
+
+Answer exactly in this format:
+Danger: Y or N
+Risk level: Low / Medium / High
+Main risks: short comma-separated list
+Explanation: one or two sentences
+
+Use only the description provided.
+",llama3.2:1b,0.1,Y,High,"Danger: Y
+Risk level: High
+Main risks: deforestation, flooding, erosion, pollution, industrial/ mining activities"
+2026-03-15T22:06:41.543847,38.7169,-9.1399,15,C:\Users\lilik\OneDrive\Documents\2025-2027 Nova Sbe\S2\T1\2612-Advanced Programming for Data Science\Group project\Group_J\images\esri_38.7169_-9.1399_z15.jpg,"Describe this satellite image in detail.
+Focus on vegetation, water bodies, bare soil, roads, buildings,
+industrial or mining areas, and signs of deforestation, flooding,
+erosion, fire, pollution, or land degradation.
+End with a short summary of possible environmental concerns.
+",moondream,0.2,"
+The satellite image shows an aerial view of a densely populated city with numerous buildings in shades of orange and brown. The city is surrounded by water bodies, indicating its proximity to the sea or river. The vegetation appears sparse, suggesting that some areas might be experiencing deforestation or land degradation. There are roads crisscrossing through the city, connecting different parts of the urban landscape. The image also contains signs of pollution, such as industrial or mining areas and possibly a factory in the vicinity. Overall, the scene highlights the complex relationship between human activity and the environment within this densely populated urban setting.","You are an environmental risk analyst.
+Based only on the satellite image description below, determine whether
+the area shows signs of environmental danger.
+
+Answer exactly in this format:
+Danger: Y or N
+Risk level: Low / Medium / High
+Main risks: short comma-separated list
+Explanation: one or two sentences
+
+Use only the description provided.
+",llama3.2:1b,0.1,N,Low,"Danger: N
+Risk level: Low
+Main risks: deforestation, land degradation, pollution, industrial/ mining activities"
+2026-03-15T22:16:11.811292,3.46,-62.21,14,C:\Users\lilik\OneDrive\Documents\2025-2027 Nova Sbe\S2\T1\2612-Advanced Programming for Data Science\Group project\Group_J\images\esri_3.46_-62.21_z14.jpg,"Describe this satellite image in detail.
+Focus on vegetation, water bodies, bare soil, roads, buildings,
+industrial or mining areas, and signs of deforestation, flooding,
+erosion, fire, pollution, or land degradation.
+End with a short summary of possible environmental concerns.
+",moondream,0.2,"
+The image presents an aerial view of a green field that is dotted with several small rivers running through it. The field appears to be lush and well-maintained, indicating healthy vegetation growth. There are also some roads visible in the area, suggesting human activity or infrastructure development nearby. However, there are no buildings or industrial areas present in the image, which could potentially indicate a rural or less developed region.","You are an environmental risk analyst.
+Based only on the satellite image description below, determine whether
+the area shows signs of environmental danger.
+
+Answer exactly in this format:
+Danger: Y or N
+Risk level: Low / Medium / High
+Main risks: short comma-separated list
+Explanation: one or two sentences
+
+Use only the description provided.
+",llama3.2:1b,0.1,N,Low,"Danger: N
+Risk level: Low
+Main risks: None mentioned"
+2026-03-15T22:25:17.535364,3.46,-62.21,13,C:\Users\lilik\OneDrive\Documents\2025-2027 Nova Sbe\S2\T1\2612-Advanced Programming for Data Science\Group project\Group_J\images\esri_3.46_-62.21_z13.jpg,"Describe this satellite image in detail.
+Focus on vegetation, water bodies, bare soil, roads, buildings,
+industrial or mining areas, and signs of deforestation, flooding,
+erosion, fire, pollution, or land degradation.
+End with a short summary of possible environmental concerns.
+",moondream,0.2,"
+The satellite image shows a lush green landscape with patches of bare soil, water bodies such as rivers and lakes, and vegetation like trees and bushes. The area also features roads and buildings, suggesting human activity in the region. However, there are signs of deforestation or land degradation, which could indicate potential environmental concerns that need to be addressed for sustainable development.
+
+The presence of clouds indicates a cloudy day, adding to the overall atmosphere of the scene. The image provides a comprehensive view of the landscape and its various elements, highlighting both natural beauty and human impact on the environment.","You are an environmental risk analyst specializing in deforestation 
+and land degradation. Be conservative in your assessment — if there 
+is ANY doubt, flag the area as at risk.
+
+You will be given:
+1. The coordinates of the area
+2. Deforestation statistics for the country the area belongs to
+3. A satellite image description of the area
+
+Consider that even dense forest can be at high risk of deforestation 
+if it is in a known at-risk region like the Amazon, Congo Basin, or 
+Southeast Asia. Weight the country statistics heavily in your assessment.
+
+Answer exactly in this format:
+Danger: Y or N
+Risk level: Low / Medium / High
+Main risks: short comma-separated list
+Explanation: one or two sentences
+
+Use only the information provided.
+",llama3.2:1b,0.1,Y,High,"Danger: Y
+Risk level: High
+Main risks:
+Short-duration droughts in areas with low rainfall, potentially exacerbating deforestation; land degradation due to repeated flooding and erosion from heavy rainfall; loss of biodiversity as forests are cleared for agriculture or urban development.
+
+Explanation: The presence of clouds indicates a cloudy day on the satellite image, which could suggest short-duration droughts or increased risk of flash floods. These conditions can have severe environmental consequences, including accelerated deforestation and land degradation in areas with low rainfall or high sensitivity to flooding."

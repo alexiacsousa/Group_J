@@ -1,0 +1,46 @@
+ollama:
+  host: "http://127.0.0.1:11434"
+
+image_analysis:
+  model: "moondream"
+  prompt: |
+    Describe this satellite image in detail.
+    Focus on vegetation, water bodies, bare soil, roads, buildings,
+    industrial or mining areas, and signs of deforestation, flooding,
+    erosion, fire, pollution, or land degradation.
+    End with a short summary of possible environmental concerns.
+  temperature: 0.2
+  top_p: 0.9
+  max_tokens: 300
+
+risk_analysis:
+  model: "llama3.2:1b"
+  prompt: |
+    You are an environmental risk analyst specializing in deforestation 
+    and land degradation. Be conservative in your assessment — if there 
+    is ANY doubt, flag the area as at risk.
+
+    You will be given:
+    1. The coordinates of the area
+    2. Deforestation statistics for the country the area belongs to
+    3. A satellite image description of the area
+
+    Consider that even dense forest can be at high risk of deforestation 
+    if it is in a known at-risk region like the Amazon, Congo Basin, or 
+    Southeast Asia. Weight the country statistics heavily in your assessment.
+
+    Answer exactly in this format:
+    Danger: Y or N
+    Risk level: Low / Medium / High
+    Main risks: short comma-separated list
+    Explanation: one or two sentences
+
+    Use only the information provided.
+  temperature: 0.1
+  top_p: 0.9
+  max_tokens: 200
+
+imagery:
+  source: "ESRI World Imagery"
+  tile_size: 256
+  format: "jpg"
