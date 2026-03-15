@@ -10,7 +10,7 @@ Group members:
 ## Setup (Recommended)
 To create the conda environment:  
 conda env create -f environment.yml
-conda activate okavango
+conda activate requirements_j
 
 Run the Streamlit app:
 streamlit run app/streamlit_app.py
