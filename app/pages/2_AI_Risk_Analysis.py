@@ -104,38 +104,60 @@ def get_country_from_coordinates(lat: float, lon: float, data: EnvironmentalData
         return match.iloc[0]["NAME"]
     return None
 
-def get_country_stats(country_name: str, data: EnvironmentalData) -> str:
-    """Returns a formatted string of deforestation statistics for the given country."""
+def get_country_stats(country_name: str, data: EnvironmentalData) -> list[dict]:
+    """Returns a list of dicts with stat, value and source for the given country."""
     stats = []
 
-    # Forest change — most recent year
     fc = data.forest_change[data.forest_change["entity"] == country_name]
     if not fc.empty:
         latest = fc.sort_values("year").iloc[-1]
-        stats.append(f"Annual forest change ({int(latest['year'])}): {latest['net_change_forest_area']:,.0f} hectares")
+        stats.append({
+            "label": f"Annual forest change ({int(latest['year'])})",
+            "value": f"{latest['net_change_forest_area']:,.0f} hectares",
+            "source": "ourworldindata.org/deforestation",
+        })
 
-    # Deforestation — most recent year
     defor = data.deforestation[data.deforestation["entity"] == country_name]
     if not defor.empty:
         latest = defor.sort_values("year").iloc[-1]
-        stats.append(f"Annual deforestation ({int(latest['year'])}): {latest['_1d_deforestation']:,.0f} hectares")
+        stats.append({
+            "label": f"Annual deforestation ({int(latest['year'])})",
+            "value": f"{latest['_1d_deforestation']:,.0f} hectares",
+            "source": "ourworldindata.org/deforestation",
+        })
 
-    # Protected land — most recent year
     prot = data.protected_land[data.protected_land["entity"] == country_name]
     if not prot.empty:
         latest = prot.sort_values("year").iloc[-1]
-        stats.append(f"Protected land ({int(latest['year'])}): {latest['er_lnd_ptld_zs']:.1f}% of land area")
+        stats.append({
+            "label": f"Protected land ({int(latest['year'])})",
+            "value": f"{latest['er_lnd_ptld_zs']:.1f}% of land area",
+            "source": "ourworldindata.org/sdgs/life-on-land",
+        })
 
-    # Degraded land — most recent year
     degrad = data.degraded_land[data.degraded_land["entity"] == country_name]
     if not degrad.empty:
         latest = degrad.sort_values("year").iloc[-1]
-        stats.append(f"Degraded land ({int(latest['year'])}): {latest['_15_3_1__ag_lnd_dgrd']:.1f}% of land area")
+        stats.append({
+            "label": f"Degraded land ({int(latest['year'])})",
+            "value": f"{latest['_15_3_1__ag_lnd_dgrd']:.1f}% of land area",
+            "source": "ourworldindata.org/sdgs/life-on-land",
+        })
 
+    return stats
+
+def format_stats_for_prompt(stats: list[dict]) -> str:
+    """Formats the country stats list into a plain string for the AI prompt."""
     if not stats:
         return "No country-level statistics available."
+    return "\n".join([f"{s['label']}: {s['value']}" for s in stats])
 
-    return "\n".join(stats)
+
+# --- IMAGE AVAILABILITY CHECK ---
+def is_image_unavailable(image_desc: str) -> bool:
+    """Checks if the vision model indicated that no imagery is available."""
+    keywords = ["no data", "not available", "no image", "blank", "black", "no imagery", "unavailable"]
+    return any(keyword in image_desc.lower() for keyword in keywords)
 
 
 # --- HELPER FUNCTIONS ---
@@ -181,26 +203,50 @@ def pull_model_if_missing(model_name: str) -> None:
 
 
 # --- DISPLAY RESULTS ---
-def display_results(image_bytes: bytes, image_path: Path, image_desc: str, assessment: str, danger_flag: str, risk_level: str, country_name: str | None, country_stats: str) -> None:
+def display_results(image_bytes: bytes, image_path: Path, image_desc: str, assessment: str, danger_flag: str, risk_level: str, country_name: str | None, stats: list[dict]) -> None:
     """Displays the AI description, country statistics and risk assessment."""
     st.markdown("---")
     st.subheader("AI Vision Description")
     st.write(image_desc)
 
-    if country_name:
-        st.markdown("---")
-        st.subheader(f"📊 Country Statistics: {country_name}")
-        st.code(country_stats)
+    st.markdown("---")
+    st.subheader(f"📊 Most Recent Country Statistics: {country_name if country_name else 'N/A'}")
+    if stats:
+        # Display all stats in a single code box
+        stats_text = "\n".join([f"{s['label']}: {s['value']}" for s in stats])
+        st.code(stats_text)
+        # Collect unique sources and display below the box
+        sources = sorted(set(s["source"] for s in stats))
+        st.caption("Sources: " + " · ".join(sources))
+    else:
+        st.warning("No recent statistical data available from ourworldindata.org")
 
     st.markdown("---")
     st.subheader("Environmental Risk Assessment")
 
+    # Parse assessment lines
+    parsed = {}
+    for line in assessment.splitlines():
+        for key in ["Danger", "Risk level", "Main risks", "Explanation"]:
+            if line.lower().startswith(key.lower() + ":"):
+                parsed[key] = line.split(":", 1)[1].strip()
+
+    # Risk level emoji
+    risk_emoji = {"low": "🟢", "medium": "🟡", "high": "🔴"}.get(risk_level.lower(), "⚪")
+
+    # Overall indicator — keep yellow warning box style
     if danger_flag == "Y":
-        st.error(f"🚨 **ENVIRONMENTAL RISK DETECTED** — Risk Level: {risk_level}")
-        st.warning(assessment)
+        st.error(f"🚨 **ENVIRONMENTAL RISK DETECTED** — {risk_emoji} Risk Level: {risk_level}")
     else:
-        st.success(f"✅ **NO IMMEDIATE RISK DETECTED** — Risk Level: {risk_level}")
-        st.info(assessment)
+        st.warning(f"{risk_emoji} **Risk Level: {risk_level}**")
+
+    # Main risks — only show triangle if high risk
+    main_risks = parsed.get("Main risks", "N/A")
+    risks_prefix = "⚠️ " if risk_level.lower() == "high" else ""
+    st.markdown(f"**{risks_prefix}Main Risks:** {main_risks}")
+
+    # Explanation
+    st.markdown(f"**📝 Explanation:** {parsed.get('Explanation', assessment)}")
 
 
 # --- MAIN APP ---
@@ -258,7 +304,7 @@ def main():
             st.session_state["image_lon"],
             env_data,
         )
-        country_stats = get_country_stats(country_name, env_data) if country_name else "Coordinates are not within a recognized country."
+        stats = get_country_stats(country_name, env_data) if country_name else []
 
         st.markdown("---")
         st.subheader("Satellite Imagery")
@@ -291,7 +337,7 @@ def main():
                 existing["danger_flag"],
                 existing["risk_level"],
                 country_name,
-                country_stats,
+                stats,
             )
 
         elif not st.session_state.get("analysis_done"):
@@ -309,13 +355,19 @@ def main():
                     )
                     image_desc = vision_res.response
 
+                # CHECK IF IMAGE IS UNAVAILABLE
+                if is_image_unavailable(image_desc):
+                    st.warning("🛰️ No satellite imagery available for these coordinates. Risk assessment cannot be performed.")
+                    return
+
                 # TEXT AI — with coordinates and country stats
                 pull_model_if_missing(text_model)
+                stats_for_prompt = format_stats_for_prompt(stats)
                 full_prompt = (
                     f"{text_prompt}\n\n"
                     f"Coordinates: {st.session_state['image_lat']}, {st.session_state['image_lon']}\n"
                     f"Country: {country_name if country_name else 'Unknown'}\n"
-                    f"Country statistics:\n{country_stats}\n\n"
+                    f"Country statistics:\n{stats_for_prompt}\n\n"
                     f"Satellite image description:\n{image_desc}"
                 )
                 with st.spinner(f"Evaluating risk with {text_model}..."):
@@ -344,7 +396,7 @@ def main():
                 })
 
                 st.session_state["analysis_done"] = True
-                display_results(image_bytes, image_path, image_desc, assessment, danger_flag, risk_level, country_name, country_stats)
+                display_results(image_bytes, image_path, image_desc, assessment, danger_flag, risk_level, country_name, stats)
 
 
 if __name__ == "__main__":

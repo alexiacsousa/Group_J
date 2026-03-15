@@ -93,3 +93,109 @@ Main risks:
 Short-duration droughts in areas with low rainfall, potentially exacerbating deforestation; land degradation due to repeated flooding and erosion from heavy rainfall; loss of biodiversity as forests are cleared for agriculture or urban development.
 
 Explanation: The presence of clouds indicates a cloudy day on the satellite image, which could suggest short-duration droughts or increased risk of flash floods. These conditions can have severe environmental consequences, including accelerated deforestation and land degradation in areas with low rainfall or high sensitivity to flooding."
+2026-03-15T23:10:47.723517,48.13,11.51,15,C:\Users\lilik\OneDrive\Documents\2025-2027 Nova Sbe\S2\T1\2612-Advanced Programming for Data Science\Group project\Group_J\images\esri_48.13_11.51_z15.jpg,"Describe this satellite image in detail.
+Focus on vegetation, water bodies, bare soil, roads, buildings,
+industrial or mining areas, and signs of deforestation, flooding,
+erosion, fire, pollution, or land degradation.
+End with a short summary of possible environmental concerns.
+",moondream,0.2,"
+The satellite image shows an aerial view of a densely populated urban area characterized by numerous buildings, trees, roads, and water bodies such as lakes and rivers. The vegetation appears lush and green, indicating healthy growth in the city's natural surroundings. However, there are also signs of deforestation or land degradation, which could be due to industrial activities or other human-induced factors.
+
+The image is dominated by shades of brown and green, with some areas appearing darker than others. This suggests that certain parts of the city might have less vegetation cover or face challenges related to pollution or erosion. The presence of water bodies indicates a potential source of drinking water for the residents but could also be a factor contributing to flooding in certain seasons.
+
+Overall, the image highlights the complex relationship between urban development and environmental sustainability, as cities continue to grow while trying to balance economic growth with the preservation of natural resources and ecosystems.","You are an environmental risk analyst with broad expertise across
+all types of ecosystems and environmental threats.
+
+You will be given coordinates, a satellite image description, and
+country statistics if available. If no country statistics are provided,
+use your own knowledge about the environmental situation of that region
+to inform your assessment.
+
+When in doubt, flag the area as potential risk rather than certain risk.
+Only flag as certain danger if there is clear evidence from the image
+description or country statistics. Use risk level ""Medium"" for uncertain
+cases rather than defaulting to Low or High.
+
+Consider the full range of potential environmental dangers based on what
+is visible in the image, including but not limited to:
+- Forests: deforestation, illegal logging, fire risk, fragmentation
+- Oceans and coasts: overfishing, coral bleaching, plastic pollution, coastal erosion
+- Rivers and lakes: water pollution, drought, over-extraction
+- Agricultural land: soil degradation, pesticide overuse, monoculture risk
+- Urban areas: urban sprawl, heat islands, air and water pollution
+- Arid regions: desertification, sand encroachment, water scarcity
+- Mountains and glaciers: glacial retreat, erosion, landslide risk
+- Known at-risk regions like the Amazon, Congo Basin, or Southeast Asia
+  should be weighted heavily even if the image looks healthy.
+
+Always report potential risks under Main risks even if the overall
+risk level is Low or Medium. A low risk area can still have latent
+threats worth flagging.
+
+Weight country statistics heavily when available, but always complement
+them with ecosystem-specific reasoning based on what you see in the image.
+
+Answer exactly in this format:
+Danger: Yes or No
+Risk level: Low / Medium / High
+Main risks: short comma-separated list of current and potential risks
+Explanation: one or two full sentences describing more detailed the main risks
+
+Use only the information provided and your environmental knowledge.
+",llama3.2:1b,0.1,N,Medium,"Danger: No
+Risk level: Medium
+Main risks:
+Protected land (2024): The significant percentage of protected land indicates a substantial safeguard against deforestation and habitat destruction.
+Forest: Moderate risk due to ongoing deforestation despite efforts to conserve forest cover, which could impact biodiversity and climate regulation in the long term.
+
+Explanation: While Germany's protected land statistics suggest that there is some level of conservation, the country's rapid urbanization and industrial development continue to pose significant environmental challenges. The city's dense population and infrastructure demands will likely put pressure on natural resources, potentially leading to increased risk from deforestation or habitat destruction despite these protections in place."
+2026-03-15T23:12:06.955598,48.13,-11.51,15,C:\Users\lilik\OneDrive\Documents\2025-2027 Nova Sbe\S2\T1\2612-Advanced Programming for Data Science\Group project\Group_J\images\esri_48.13_-11.51_z15.jpg,"Describe this satellite image in detail.
+Focus on vegetation, water bodies, bare soil, roads, buildings,
+industrial or mining areas, and signs of deforestation, flooding,
+erosion, fire, pollution, or land degradation.
+End with a short summary of possible environmental concerns.
+",moondream,0.2,"
+The image shows a satellite view of an area that appears to be experiencing environmental issues such as deforestation, flooding, erosion, or pollution. The landscape features bare soil and roads, indicating potential human activity in the region. Additionally, there are signs of industrial or mining activities present, which could contribute to these problems. The presence of water bodies also suggests a complex ecosystem that may be affected by these environmental concerns. Overall, the image highlights the need for effective conservation efforts and sustainable land management practices to address these challenges.","You are an environmental risk analyst with broad expertise across
+all types of ecosystems and environmental threats.
+
+You will be given coordinates, a satellite image description, and
+country statistics if available. If no country statistics are provided,
+use your own knowledge about the environmental situation of that region
+to inform your assessment.
+
+When in doubt, flag the area as potential risk rather than certain risk.
+Only flag as certain danger if there is clear evidence from the image
+description or country statistics. Use risk level ""Medium"" for uncertain
+cases rather than defaulting to Low or High.
+
+Consider the full range of potential environmental dangers based on what
+is visible in the image, including but not limited to:
+- Forests: deforestation, illegal logging, fire risk, fragmentation
+- Oceans and coasts: overfishing, coral bleaching, plastic pollution, coastal erosion
+- Rivers and lakes: water pollution, drought, over-extraction
+- Agricultural land: soil degradation, pesticide overuse, monoculture risk
+- Urban areas: urban sprawl, heat islands, air and water pollution
+- Arid regions: desertification, sand encroachment, water scarcity
+- Mountains and glaciers: glacial retreat, erosion, landslide risk
+- Known at-risk regions like the Amazon, Congo Basin, or Southeast Asia
+  should be weighted heavily even if the image looks healthy.
+
+Always report potential risks under Main risks even if the overall
+risk level is Low or Medium. A low risk area can still have latent
+threats worth flagging.
+
+Weight country statistics heavily when available, but always complement
+them with ecosystem-specific reasoning based on what you see in the image.
+
+Answer exactly in this format:
+Danger: Yes or No
+Risk level: Low / Medium / High
+Main risks: short comma-separated list of current and potential risks
+Explanation: one or two full sentences describing more detailed the main risks
+
+Use only the information provided and your environmental knowledge.
+",llama3.2:1b,0.1,Y,Medium,"Danger: Yes
+Risk level: Medium
+Main risks: deforestation, pollution, flooding, erosion, industrial/ mining activities.
+
+Explanation: The satellite image description indicates signs of human activity, such as bare soil, roads, and water bodies, which are indicative of environmental degradation and potential environmental hazards. Deforestation is a clear risk due to the visible clearing of forests, while pollution and flooding suggest complex ecosystem issues. Erosion and industrial/ mining activities also pose significant risks to the area's natural resources and biodiversity. The overall image description provides sufficient evidence to flag these areas as potential environmental concerns."
