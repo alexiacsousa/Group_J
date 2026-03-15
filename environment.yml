@@ -8,6 +8,7 @@ dependencies:
   - altair>=5
   - pandas
   - geopandas
+  - shapely
   - matplotlib
   - requests
   - pytest
