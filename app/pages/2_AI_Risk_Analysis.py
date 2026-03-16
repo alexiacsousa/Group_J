@@ -81,11 +81,11 @@ def parse_assessment(assessment: str) -> tuple[str, str]:
         line_lower = line.lower()
         if line_lower.startswith("danger:"):
             value = line.split(":", 1)[1].strip().upper()
-            danger_flag = "Y" if "Y" in value else "N"
+            danger_flag = "Y" if "YES" in value or value == "Y" else "N"
         elif line_lower.startswith("risk level:"):
             value = line.split(":", 1)[1].strip()
             if any(level in value.lower() for level in ["low", "medium", "high"]):
-                risk_level = value
+                risk_level = value.strip()
 
     return danger_flag, risk_level
 
@@ -156,7 +156,11 @@ def format_stats_for_prompt(stats: list[dict]) -> str:
 # --- IMAGE AVAILABILITY CHECK ---
 def is_image_unavailable(image_desc: str) -> bool:
     """Checks if the vision model indicated that no imagery is available."""
-    keywords = ["no data", "not available", "no image", "blank", "black", "no imagery", "unavailable"]
+    keywords = [
+        "no data", "not available", "no image", "blank", "black",
+        "no imagery", "unavailable", "map data not available",
+        "no map data", "not yet available", "no satellite",
+    ]
     return any(keyword in image_desc.lower() for keyword in keywords)
 
 
@@ -212,10 +216,8 @@ def display_results(image_bytes: bytes, image_path: Path, image_desc: str, asses
     st.markdown("---")
     st.subheader(f"📊 Most Recent Country Statistics: {country_name if country_name else 'N/A'}")
     if stats:
-        # Display all stats in a single code box
         stats_text = "\n".join([f"{s['label']}: {s['value']}" for s in stats])
         st.code(stats_text)
-        # Collect unique sources and display below the box
         sources = sorted(set(s["source"] for s in stats))
         st.caption("Sources: " + " · ".join(sources))
     else:
@@ -231,22 +233,29 @@ def display_results(image_bytes: bytes, image_path: Path, image_desc: str, asses
             if line.lower().startswith(key.lower() + ":"):
                 parsed[key] = line.split(":", 1)[1].strip()
 
-    # Risk level emoji
-    risk_emoji = {"low": "🟢", "medium": "🟡", "high": "🔴"}.get(risk_level.lower(), "⚪")
-
-    # Overall indicator — keep yellow warning box style
-    if danger_flag == "Y":
-        st.error(f"🚨 **ENVIRONMENTAL RISK DETECTED** — {risk_emoji} Risk Level: {risk_level}")
+    # Overall indicator — color based on risk level
+    risk_lower = risk_level.lower()
+    if risk_lower == "high":
+        st.error(f"🔴 **Risk Level: {risk_level}**")
+    elif risk_lower == "medium":
+        st.warning(f"🟡 **Risk Level: {risk_level}**")
     else:
-        st.warning(f"{risk_emoji} **Risk Level: {risk_level}**")
+        st.success(f"🟢 **Risk Level: {risk_level}**")
 
-    # Main risks — only show triangle if high risk
+    # Main risks — triangle only if high
     main_risks = parsed.get("Main risks", "N/A")
-    risks_prefix = "⚠️ " if risk_level.lower() == "high" else ""
+    risks_prefix = "⚠️ " if risk_lower == "high" else ""
     st.markdown(f"**{risks_prefix}Main Risks:** {main_risks}")
 
     # Explanation
-    st.markdown(f"**📝 Explanation:** {parsed.get('Explanation', assessment)}")
+    explanation = parsed.get("Explanation", "")
+    if explanation and not any(
+        explanation.lower().startswith(k.lower())
+        for k in ["danger:", "risk level:", "main risks:"]
+    ):
+        st.markdown(f"**Explanation:** {explanation}")
+    else:
+        st.markdown("**Explanation:** Not available for this assessment.")
 
 
 # --- MAIN APP ---

@@ -48,13 +48,11 @@ risk_analysis:
     Weight country statistics heavily when available, but always complement
     them with ecosystem-specific reasoning based on what you see in the image.
 
-    Answer exactly in this format:
+    Answer ONLY in exactly this format, no other text before or after:
     Danger: Yes or No
     Risk level: Low / Medium / High
-    Main risks: short comma-separated list of current and potential risks
-    Explanation: one or two full sentences describing more detailed the main risks
-
-    Use only the information provided and your environmental knowledge.
+    Main risks: risk1, risk2, risk3
+    Explanation: Write a short paragraph (1-5 sentences) here elaborating on the main risks detected.
   temperature: 0.1
   top_p: 0.9
   max_tokens: 200
