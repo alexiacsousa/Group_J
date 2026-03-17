@@ -94,3 +94,100 @@ Explanation: Write a short paragraph (1-5 sentences) here elaborating on the mai
 Risk level: Medium
 Main risks: Forests, Protected land, Degraded land
 Explanation: High levels of forest cover are expected due to rapid urbanization in densely populated areas like this one, posing a threat to long-term sustainability. The presence of protected and degraded land within the city suggests that environmental policies may be inadequate, allowing continued deforestation and degradation. The lack of green spaces within the city limits is alarming, as it exacerbates the risk of heat islands and air pollution. This area is at high risk due to its vulnerable ecosystems and insufficient conservation efforts."
+2026-03-17T18:09:23.384514,-9.36,-63.0,15,esri_-9.36_-63.0_z15.jpg,"Describe this satellite image in detail.
+Focus on vegetation, water bodies, bare soil, roads, buildings,
+industrial or mining areas, and signs of deforestation, flooding,
+erosion, fire, pollution, or land degradation.
+End with a short summary of possible environmental concerns.
+",moondream,0.2,"
+The image presents an aerial view of a densely forested area. The predominant color scheme is green, indicating the presence of vegetation such as trees and bushes covering most of the landscape. There are also some visible water bodies in the vicinity, suggesting that this region might be near a river or lake. Additionally, there are roads and buildings scattered throughout the scene, which could potentially indicate human activity in the area. The image also contains signs of deforestation, erosion, flooding, pollution, or land degradation, indicating possible environmental concerns related to the management and preservation of this lush green landscape.","You are an environmental risk analyst with broad expertise across
+all types of ecosystems and environmental threats.
+
+You will be given coordinates, a satellite image description, and
+country statistics if available. If no country statistics are provided,
+use your own knowledge about the environmental situation of that region
+to inform your assessment.
+
+When in doubt, flag the area as potential risk rather than certain risk.
+Only flag as certain danger if there is clear evidence from the image
+description or country statistics. Use risk level ""Medium"" for uncertain
+cases rather than defaulting to Low or High.
+
+Consider the full range of potential environmental dangers based on what
+is visible in the image, including but not limited to:
+- Forests: deforestation, illegal logging, fire risk, fragmentation
+- Oceans and coasts: overfishing, coral bleaching, plastic pollution, coastal erosion
+- Rivers and lakes: water pollution, drought, over-extraction
+- Agricultural land: soil degradation, pesticide overuse, monoculture risk
+- Urban areas: urban sprawl, heat islands, air and water pollution
+- Arid regions: desertification, sand encroachment, water scarcity
+- Mountains and glaciers: glacial retreat, erosion, landslide risk
+- Known at-risk regions like the Amazon, Congo Basin, or Southeast Asia
+  should be weighted heavily even if the image looks healthy.
+
+Always report potential risks under Main risks even if the overall
+risk level is Low or Medium. A low risk area can still have latent
+threats worth flagging.
+
+Weight country statistics heavily when available, but always complement
+them with ecosystem-specific reasoning based on what you see in the image.
+
+Answer ONLY in exactly this format, no other text before or after:
+Danger: Yes or No
+Risk level: Low / Medium / High
+Main risks: risk1, risk2, risk3
+Explanation: Write a short paragraph (1-5 sentences) here elaborating on the main risks detected.
+",llama3.2:1b,0.1,Y,High,"Danger: Yes
+Risk level: High
+Main risks: Forests: Deforestation, Monoculture Risk; Rivers/Lakes: Water Pollution
+Explanation: The dense forested area is highly vulnerable due to recent significant deforestation (2020) exceeding annual targets and high rates of forest clearance. This could exacerbate monoculture practices, leading to further habitat loss for local biodiversity. Additionally, the surrounding waters could be affected by increased pollution from agricultural runoff and industrial activities, posing a risk to aquatic life and human health."
+2026-03-17T18:19:52.240753,40.52,-112.15,15,esri_40.52_-112.15_z15.jpg,"Describe this satellite image in detail.
+Focus on vegetation, water bodies, bare soil, roads, buildings,
+industrial or mining areas, and signs of deforestation, flooding,
+erosion, fire, pollution, or land degradation.
+End with a short summary of possible environmental concerns.
+",moondream,0.2,"
+The satellite image shows an aerial view of a large open area that appears to be a coal mine or industrial site. The landscape features numerous hills and valleys, indicating the presence of mountains in the background. The terrain is predominantly covered in dirt and bare soil, with some vegetation scattered throughout. There are also several roads and buildings within the scene, suggesting human activity and infrastructure development around the area.
+
+The image highlights potential environmental concerns such as deforestation, flooding, erosion, or pollution resulting from industrial activities. These issues can have a significant impact on the surrounding ecosystem and may require careful planning and management to minimize their effects on the environment and local communities.","You are an environmental risk analyst with broad expertise across
+all types of ecosystems and environmental threats.
+
+You will be given coordinates, a satellite image description, and
+country statistics if available. If no country statistics are provided,
+use your own knowledge about the environmental situation of that region
+to inform your assessment.
+
+When in doubt, flag the area as potential risk rather than certain risk.
+Only flag as certain danger if there is clear evidence from the image
+description or country statistics. Use risk level ""Medium"" for uncertain
+cases rather than defaulting to Low or High.
+
+Consider the full range of potential environmental dangers based on what
+is visible in the image, including but not limited to:
+- Forests: deforestation, illegal logging, fire risk, fragmentation
+- Oceans and coasts: overfishing, coral bleaching, plastic pollution, coastal erosion
+- Rivers and lakes: water pollution, drought, over-extraction
+- Agricultural land: soil degradation, pesticide overuse, monoculture risk
+- Urban areas: urban sprawl, heat islands, air and water pollution
+- Arid regions: desertification, sand encroachment, water scarcity
+- Mountains and glaciers: glacial retreat, erosion, landslide risk
+- Known at-risk regions like the Amazon, Congo Basin, or Southeast Asia
+  should be weighted heavily even if the image looks healthy.
+
+Always report potential risks under Main risks even if the overall
+risk level is Low or Medium. A low risk area can still have latent
+threats worth flagging.
+
+Weight country statistics heavily when available, but always complement
+them with ecosystem-specific reasoning based on what you see in the image.
+
+Answer ONLY in exactly this format, no other text before or after:
+Danger: Yes or No
+Risk level: Low / Medium / High
+Main risks: risk1, risk2, risk3
+Explanation: Write a short paragraph (1-5 sentences) here elaborating on the main risks detected.
+",llama3.2:1b,0.1,Y,Medium,"Danger: Yes
+Risk level: Medium
+Main risks: Deforestation, Urban sprawl, Soil degradation
+
+Explanation: The satellite image suggests that the area is likely to be a coal mine or industrial site, which poses significant environmental threats due to deforestation and soil degradation. As a coal mine, it may also lead to air and water pollution, while its proximity to human activity and infrastructure development increases the risk of urban sprawl and associated problems such as heat islands and increased greenhouse gas emissions. The image does not provide clear evidence of flooding or erosion, but these issues are also possible due to the industrial activities around the site. Overall, the potential environmental impacts on the surrounding ecosystem and local communities require careful planning and management to minimize their effects."
