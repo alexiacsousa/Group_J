@@ -19,7 +19,7 @@ def download_data(download_dir: Path) -> None:
     }
 
     for name, url in urls.items():
-        response = requests.get(url, timeout=30)
+        response = requests.get(url, timeout=120)
         response.raise_for_status()
 
         file_path = download_dir / f"{name}.csv"

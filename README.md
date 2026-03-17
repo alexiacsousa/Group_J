@@ -22,7 +22,8 @@ conda env update -f environment.yml --prune
 
 Run the Streamlit app:
 ```
-streamlit run app/streamlit_app.py
+streamlit run app/1_Environmental_Explorer.py
+streamlit run app/pages/2_AI_Risk_Analysis.py
 ```
 Run tests:
 ```

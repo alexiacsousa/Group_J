@@ -331,7 +331,7 @@ def main():
 
         if existing and not st.session_state.get("analysis_done"):
             st.info("📦 Results loaded from database cache.")
-            image_path = Path(existing["image_path"])
+            image_path = images_dir / existing["image_path"]
             if image_path.exists():
                 cached_image_bytes = image_path.read_bytes()
             else:
@@ -391,7 +391,7 @@ def main():
                     "latitude": st.session_state["image_lat"],
                     "longitude": st.session_state["image_lon"],
                     "zoom": st.session_state["image_zoom"],
-                    "image_path": str(image_path),
+                    "image_path": filename,
                     "image_prompt": vision_prompt,
                     "image_model": vision_model,
                     "image_model_temperature": vision_temperature,
