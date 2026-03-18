@@ -7,6 +7,18 @@ Group members:
     - Liane Kpocheme: 73516@novasbe.pt  
     - Simone Capata: 74777@novasbe.pt  
 
+## Prerequisites
+
+Before setting up the environment, make sure you have the following installed:
+
+- ⁠[Conda](https://docs.conda.io/en/latest/miniconda.html)
+- [Ollama](https://ollama.com/download): required for the AI Workflow page
+
+After installing Ollama, make sure it is running before launching the app:
+```
+ollama serve
+```
+
 ## Setup (Recommended)
 To create the conda environment:
 ```
@@ -19,12 +31,15 @@ To update the conda environment:
 conda env update -f environment.yml --prune
 ```
 
-
 Run the Streamlit app:
 ```
 streamlit run app/1_Environmental_Explorer.py
 streamlit run app/pages/2_AI_Risk_Analysis.py
 ```
+⁠> ***Note:** Make sure Ollama is running (⁠ ollama serve ⁠) before launching Page 2 of the app.*
+
+
+
 Run tests:
 ```
 pytest -q
