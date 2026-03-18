@@ -4,6 +4,7 @@ import math
 import requests
 import yaml
 import csv
+import json
 import pandas as pd
 from pathlib import Path
 from PIL import Image
@@ -35,42 +36,40 @@ DB_COLUMNS = [
     "latitude",
     "longitude",
     "zoom",
-    "image_path",
+    "tile_x",
+    "tile_y",
+    "image_description",
     "image_prompt",
     "image_model",
-    "image_model_temperature",
-    "image_description",
+    "text_description",
     "text_prompt",
     "text_model",
-    "text_model_temperature",
-    "danger_flag",
+    "danger",
     "risk_level",
-    "text_description",
 ]
 
 def init_database() -> None:
     """Creates the database directory and images.csv if they do not exist."""
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     if not DB_PATH.exists():
-        with open(DB_PATH, "w", newline="") as f:
-            writer = csv.DictWriter(f, fieldnames=DB_COLUMNS)
-            writer.writeheader()
+        pd.DataFrame(columns=DB_COLUMNS).to_csv(DB_PATH, index=False, sep=";")
 
-def check_existing_entry(lat: float, lon: float, zoom: int) -> dict | None:
-    """Checks if an entry for the given coordinates and zoom already exists in the database."""
+def check_existing_entry(tile_x: int, tile_y: int, zoom: int) -> dict | None:
+    """Checks if an entry for the given tile coordinates already exists in the database."""
     if not DB_PATH.exists():
         return None
-    df = pd.read_csv(DB_PATH)
-    match = df[(df["latitude"] == lat) & (df["longitude"] == lon) & (df["zoom"] == zoom)]
+    df = pd.read_csv(DB_PATH, sep=";")
+    match = df[(df["tile_x"] == tile_x) & (df["tile_y"] == tile_y) & (df["zoom"] == zoom)]
     if not match.empty:
         return match.iloc[-1].to_dict()
     return None
 
 def append_to_database(row: dict) -> None:
     """Appends a new row to the images.csv database."""
-    with open(DB_PATH, "a", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=DB_COLUMNS)
-        writer.writerow(row)
+    df = pd.read_csv(DB_PATH, sep=";")
+    new_row = pd.DataFrame([row])
+    df = pd.concat([df, new_row], ignore_index=True)
+    df.to_csv(DB_PATH, index=False, sep=";")
 
 def parse_assessment(assessment: str) -> tuple[str, str]:
     """Extracts danger flag (Y/N) and risk level (Low/Medium/High) from the assessment text."""
@@ -88,6 +87,21 @@ def parse_assessment(assessment: str) -> tuple[str, str]:
                 risk_level = value.strip()
 
     return danger_flag, risk_level
+
+def assessment_to_json(assessment: str, danger_flag: str, risk_level: str) -> str:
+    """Converts the raw assessment text into a structured JSON string."""
+    parsed = {}
+    for line in assessment.splitlines():
+        for key in ["Danger", "Risk level", "Main risks", "Explanation"]:
+            if line.lower().startswith(key.lower() + ":"):
+                parsed[key.lower().replace(" ", "_")] = line.split(":", 1)[1].strip()
+
+    return json.dumps({
+        "danger": danger_flag,
+        "risk_level": risk_level,
+        "main_risks": parsed.get("main_risks", "N/A"),
+        "explanation": parsed.get("explanation", "N/A"),
+    })
 
 
 # --- COUNTRY LOOKUP ---
@@ -207,7 +221,7 @@ def pull_model_if_missing(model_name: str) -> None:
 
 
 # --- DISPLAY RESULTS ---
-def display_results(image_bytes: bytes, image_path: Path, image_desc: str, assessment: str, danger_flag: str, risk_level: str, country_name: str | None, stats: list[dict]) -> None:
+def display_results(image_bytes: bytes, image_path: Path, image_desc: str, text_description: str, danger_flag: str, risk_level: str, country_name: str | None, stats: list[dict]) -> None:
     """Displays the AI description, country statistics and risk assessment."""
     st.markdown("---")
     st.subheader("AI Vision Description")
@@ -226,29 +240,36 @@ def display_results(image_bytes: bytes, image_path: Path, image_desc: str, asses
     st.markdown("---")
     st.subheader("Environmental Risk Assessment")
 
-    # Parse assessment lines
-    parsed = {}
-    for line in assessment.splitlines():
-        for key in ["Danger", "Risk level", "Main risks", "Explanation"]:
-            if line.lower().startswith(key.lower() + ":"):
-                parsed[key] = line.split(":", 1)[1].strip()
+    # Parse from JSON if possible, fallback to raw text parsing
+    try:
+        parsed = json.loads(text_description)
+        main_risks = parsed.get("main_risks", "N/A")
+        explanation = parsed.get("explanation", "N/A")
+        risk_level = parsed.get("risk_level", risk_level)
+        danger_flag = parsed.get("danger", danger_flag)
+    except (json.JSONDecodeError, TypeError):
+        parsed = {}
+        for line in text_description.splitlines():
+            for key in ["Danger", "Risk level", "Main risks", "Explanation"]:
+                if line.lower().startswith(key.lower() + ":"):
+                    parsed[key.lower().replace(" ", "_")] = line.split(":", 1)[1].strip()
+        main_risks = parsed.get("main_risks", "N/A")
+        explanation = parsed.get("explanation", "N/A")
 
-    # Overall indicator — color based on risk level
+# Overall indicator — color based on risk level
     risk_lower = risk_level.lower()
+    danger_text = "Yes" if danger_flag == "Y" else "No"
     if risk_lower == "high":
-        st.error(f"🔴 **Risk Level: {risk_level}**")
+        st.error(f"🔴 **Risk Level: {risk_level}** | **Danger: {danger_text}**")
     elif risk_lower == "medium":
-        st.warning(f"🟡 **Risk Level: {risk_level}**")
+        st.warning(f"🟡 **Risk Level: {risk_level}** | **Danger: {danger_text}**")
     else:
-        st.success(f"🟢 **Risk Level: {risk_level}**")
+        st.success(f"🟢 **Risk Level: {risk_level}** | **Danger: {danger_text}**")
 
-    # Main risks — triangle only if high
-    main_risks = parsed.get("Main risks", "N/A")
-    risks_prefix = "⚠️ " if risk_lower == "high" else ""
-    st.markdown(f"**{risks_prefix}Main Risks:** {main_risks}")
+    # Main risks — no emoji
+    st.markdown(f"**Main Risks:** {main_risks}")
 
     # Explanation
-    explanation = parsed.get("Explanation", "")
     if explanation and not any(
         explanation.lower().startswith(k.lower())
         for k in ["danger:", "risk level:", "main risks:"]
@@ -269,17 +290,15 @@ def main():
 
     vision_model = config["image_analysis"]["model"]
     vision_prompt = config["image_analysis"]["prompt"]
-    vision_temperature = config["image_analysis"]["temperature"]
     text_model = config["risk_analysis"]["model"]
     text_prompt = config["risk_analysis"]["prompt"]
-    text_temperature = config["risk_analysis"]["temperature"]
 
     # 1. WIDGETS
     col1, col2, col3 = st.columns(3)
     with col1:
-        lat = st.number_input("Latitude", min_value=-90.0, max_value=90.0, value=38.7169, step=0.01)
+        lat = st.number_input("Latitude", min_value=-90.0, max_value=90.0, value=38.716900, step=0.000001, format="%.6f")
     with col2:
-        lon = st.number_input("Longitude", min_value=-180.0, max_value=180.0, value=-9.1399, step=0.01)
+        lon = st.number_input("Longitude", min_value=-180.0, max_value=180.0, value=-9.139900, step=0.000001, format="%.6f")
     with col3:
         zoom = st.number_input("Zoom Level", min_value=0, max_value=19, value=15, step=1)
 
@@ -288,10 +307,13 @@ def main():
         with st.spinner("Downloading satellite image..."):
             try:
                 image_bytes = get_esri_satellite_image(lat, lon, zoom)
+                tile_x, tile_y = deg2num(lat, lon, zoom)
                 st.session_state["image_bytes"] = image_bytes
                 st.session_state["image_lat"] = lat
                 st.session_state["image_lon"] = lon
                 st.session_state["image_zoom"] = zoom
+                st.session_state["tile_x"] = tile_x
+                st.session_state["tile_y"] = tile_y
                 st.session_state["analysis_done"] = False
             except Exception as e:
                 st.error(f"⚠️ No image available for these coordinates: {e}")
@@ -302,9 +324,13 @@ def main():
         image_bytes = st.session_state["image_bytes"]
         image = Image.open(BytesIO(image_bytes))
 
+        tile_x = st.session_state["tile_x"]
+        tile_y = st.session_state["tile_y"]
+        zoom_val = st.session_state["image_zoom"]
+
         images_dir = Path(__file__).parent.parent.parent / "images"
         images_dir.mkdir(parents=True, exist_ok=True)
-        filename = f"esri_{st.session_state['image_lat']}_{st.session_state['image_lon']}_z{st.session_state['image_zoom']}.jpg"
+        filename = f"tile_{tile_x}_{tile_y}_z{zoom_val}.jpg"
         image_path = images_dir / filename
 
         # COUNTRY LOOKUP
@@ -317,33 +343,32 @@ def main():
 
         st.markdown("---")
         st.subheader("Satellite Imagery")
-        st.image(image, caption=f"Lat: {st.session_state['image_lat']}, Lon: {st.session_state['image_lon']}, Zoom: {st.session_state['image_zoom']}", use_container_width=True)
+        st.image(image, caption=f"Lat: {st.session_state['image_lat']}, Lon: {st.session_state['image_lon']}, Zoom: {zoom_val} | Tile: ({tile_x}, {tile_y})", use_container_width=True)
 
         if country_name:
             st.info(f"📍 Detected country: **{country_name}**")
 
-        # 4. CHECK DATABASE BEFORE SHOWING ANALYZE BUTTON
-        existing = check_existing_entry(
-            st.session_state["image_lat"],
-            st.session_state["image_lon"],
-            st.session_state["image_zoom"],
-        )
+        # 4. CHECK DATABASE USING TILE COORDINATES
+        existing = check_existing_entry(tile_x, tile_y, zoom_val)
 
         if existing and not st.session_state.get("analysis_done"):
             st.info("📦 Results loaded from database cache.")
-            image_path = Path(existing["image_path"])
             if image_path.exists():
                 cached_image_bytes = image_path.read_bytes()
             else:
                 st.warning("Cached image file not found, re-downloading...")
-                cached_image_bytes = get_esri_satellite_image(lat, lon, zoom)
+                cached_image_bytes = get_esri_satellite_image(
+                    st.session_state["image_lat"],
+                    st.session_state["image_lon"],
+                    zoom_val,
+                )
                 image_path.write_bytes(cached_image_bytes)
             display_results(
                 cached_image_bytes,
                 image_path,
                 existing["image_description"],
                 existing["text_description"],
-                existing["danger_flag"],
+                existing["danger"],
                 existing["risk_level"],
                 country_name,
                 stats,
@@ -362,7 +387,7 @@ def main():
                         prompt=vision_prompt,
                         images=[image_bytes]
                     )
-                    image_desc = vision_res.response
+                    image_desc = vision_res.response.strip()
 
                 # CHECK IF IMAGE IS UNAVAILABLE
                 if is_image_unavailable(image_desc):
@@ -385,27 +410,27 @@ def main():
 
                 # PARSE AND SAVE
                 danger_flag, risk_level = parse_assessment(assessment)
+                text_description_json = assessment_to_json(assessment, danger_flag, risk_level)
 
                 append_to_database({
                     "timestamp": datetime.now().isoformat(),
                     "latitude": st.session_state["image_lat"],
                     "longitude": st.session_state["image_lon"],
-                    "zoom": st.session_state["image_zoom"],
-                    "image_path": str(image_path),
-                    "image_prompt": vision_prompt,
-                    "image_model": vision_model,
-                    "image_model_temperature": vision_temperature,
+                    "zoom": zoom_val,
+                    "tile_x": tile_x,
+                    "tile_y": tile_y,
                     "image_description": image_desc,
-                    "text_prompt": text_prompt,
+                    "image_prompt": "models.yaml:image_analysis",
+                    "image_model": vision_model,
+                    "text_description": text_description_json,
+                    "text_prompt": "models.yaml:risk_analysis",
                     "text_model": text_model,
-                    "text_model_temperature": text_temperature,
-                    "danger_flag": danger_flag,
+                    "danger": danger_flag,
                     "risk_level": risk_level,
-                    "text_description": assessment,
                 })
 
                 st.session_state["analysis_done"] = True
-                display_results(image_bytes, image_path, image_desc, assessment, danger_flag, risk_level, country_name, stats)
+                display_results(image_bytes, image_path, image_desc, text_description_json, danger_flag, risk_level, country_name, stats)
 
 
 if __name__ == "__main__":
