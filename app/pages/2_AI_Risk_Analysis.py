@@ -69,7 +69,7 @@ def append_to_database(row: dict) -> None:
     df = pd.read_csv(DB_PATH, sep=";")
     new_row = pd.DataFrame([row])
     df = pd.concat([df, new_row], ignore_index=True)
-    df.to_csv(DB_PATH, index=False, sep=";")
+    df.to_csv(DB_PATH, index=False, sep=";", quoting=csv.QUOTE_NONNUMERIC)
 
 def parse_assessment(assessment: str) -> tuple[str, str]:
     """Extracts danger flag (Y/N) and risk level (Low/Medium/High) from the assessment text."""
@@ -256,7 +256,7 @@ def display_results(image_bytes: bytes, image_path: Path, image_desc: str, text_
         main_risks = parsed.get("main_risks", "N/A")
         explanation = parsed.get("explanation", "N/A")
 
-# Overall indicator — color based on risk level
+    # Overall indicator — color based on risk level
     risk_lower = risk_level.lower()
     danger_text = "Yes" if danger_flag == "Y" else "No"
     if risk_lower == "high":
@@ -266,7 +266,7 @@ def display_results(image_bytes: bytes, image_path: Path, image_desc: str, text_
     else:
         st.success(f"🟢 **Risk Level: {risk_level}** | **Danger: {danger_text}**")
 
-    # Main risks — no emoji
+    # Main risks
     st.markdown(f"**Main Risks:** {main_risks}")
 
     # Explanation
@@ -387,7 +387,7 @@ def main():
                         prompt=vision_prompt,
                         images=[image_bytes]
                     )
-                    image_desc = vision_res.response.strip()
+                    image_desc = vision_res.response.strip().replace("\n", " ")
 
                 # CHECK IF IMAGE IS UNAVAILABLE
                 if is_image_unavailable(image_desc):
@@ -416,11 +416,9 @@ def main():
                     "timestamp": datetime.now().isoformat(),
                     "latitude": st.session_state["image_lat"],
                     "longitude": st.session_state["image_lon"],
-                    "zoom": st.session_state["image_zoom"],
-                    "image_path": str(image_path),
-                    "image_prompt": vision_prompt,
-                    "image_model": vision_model,
-                    "image_model_temperature": vision_temperature,
+                    "zoom": zoom_val,
+                    "tile_x": tile_x,
+                    "tile_y": tile_y,
                     "image_description": image_desc,
                     "image_prompt": "models.yaml:image_analysis",
                     "image_model": vision_model,
